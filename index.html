@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Test</title>
+        <link href="style.css" rel="stylesheet">
+        <script src="js/vue.js"></script>
+    </head>
+    <body> 
+        <div class="wrapper">
+            <div class="sample">
+                <p>{{message[0]}}</p>
+                <input id="login" class="input" type="text" v-model="userLogin">
+                <p>{{message[1]}}</p>
+                <input id="phone" class="input" type="text" v-model="userPhone">
+                <p>{{message[2]}}</p>
+                <input id="pwd" class="input" type="text" v-model="userPasswd">
+                <p v-if="errors.length">
+                    <ul>
+                      <li v-for="error in errors">{{ error }}</li>
+                    </ul>
+                  </p>
+                <button v-on:click="checkAll">
+                    Войти
+                </button>
+            </div>
+        </div>
+    </body>
+    <script>
+        let all = new Vue({
+            el: ".sample",
+            data: {
+                message: ['Логин', 'Телефон', 'Пароль'],
+                errors: [], 
+                userLogin: '',
+                userPhone: '',
+                userPasswd: ''
+            },
+            methods: {
+                checkAll(){
+                    this.errors = [];   
+                    if (this.userLogin && this.userPhone && this.userPasswd){
+                        let login = this.checkLogin(this.userLogin);
+                        let phone = this.checkPhone(this.userPhone);
+                        let passwd = this.checkPasswd(this.userPasswd);
+                        if(login && phone && passwd){
+                            alert("Данные записаны");
+                        } 
+                    }else{
+                        let loginInput = document.getElementById('login');
+                        let phoneInput = document.getElementById('phone');
+                        let pwdInput = document.getElementById('pwd');
+                        loginInput.style.backgroundColor = '#ff0f23';
+                        phoneInput.style.backgroundColor = '#ff0f23';
+                        pwdInput.style.backgroundColor = '#ff0f23';
+                        this.errors.push("Все поля являются обязательными");
+                    }
+                },
+                checkLogin(currLogin){
+                    let symbol1 = new RegExp('^[a-zA-Z0-9\_]+$');
+                    let loginInput = document.getElementById('login');
+                    if (currLogin.length > 5 && symbol1.test(currLogin)){
+                        loginInput.style.backgroundColor = '#80ff80';
+                        return true;
+                    }else{
+                        loginInput.style.backgroundColor = '#ff0f23';
+                        this.errors.push("Неверный формат логина");   
+                        return false;
+                    }
+                },
+                checkPhone(currPhone){
+                    let symbol2 = new RegExp('^[0-9]+$');
+                    let phoneInput = document.getElementById('phone');
+                    if (currPhone.length==11 && symbol2.test(currPhone)){
+                        phoneInput.style.backgroundColor = '#80ff80';
+                        return true;
+                    }else{
+                        phoneInput.style.backgroundColor = '#ff0f23';
+                        this.errors.push("Телефон укажите в формате 11 цифр");
+                        return false;
+                    }
+                },
+                checkPasswd(currPwd){
+                    let pwdInput = document.getElementById('pwd');
+                    if (currPwd.length>6){
+                        pwdInput.style.backgroundColor = '#80ff80';
+                        return true;
+                    }else{
+                        pwdInput.style.backgroundColor = '#ff0f23';
+                        this.errors.push("Пароль должен быть более 6 символов");
+                        return false;
+                    }
+                }
+            }
+        });
+    </script>    
+</html>
